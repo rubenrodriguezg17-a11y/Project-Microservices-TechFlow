@@ -1,0 +1,40 @@
+// Importamos la base del login. Puedes copiar los mismos estilos del login aquí, 
+// agregando este detalle específico para el banner de éxito tecnológico:
+
+@import '../login/login.component.scss'; // Reutiliza la hoja de estilos base si están en la misma jerarquía
+
+$success-green: #00ff99;
+
+.success-banner {
+  background-color: rgba($success-green, 0.08);
+  border: 1px solid $success-green;
+  color: $success-green;
+  padding: 12px;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 0 5px rgba($success-green, 0.4);
+  box-shadow: 0 0 10px rgba($success-green, 0.15);
+
+  svg { width: 20px; height: 20px; flex-shrink: 0; stroke: currentColor; }
+  
+  .redirect-link {
+    color: #fff;
+    text-decoration: underline;
+    font-weight: bold;
+    &:hover { text-shadow: 0 0 8px #fff; }
+  }
+}
+
+// Sobreescritura opcional para ajustar la altura si el formulario de registro es más largo
+.form-panel {
+  align-items: flex-start;
+  padding-top: 3rem;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.2); }
+}

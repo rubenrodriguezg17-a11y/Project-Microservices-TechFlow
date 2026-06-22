@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  color: #1a1a2e;
+  background: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: #185FA5;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+}
