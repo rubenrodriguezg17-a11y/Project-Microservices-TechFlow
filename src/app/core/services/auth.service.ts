@@ -12,36 +12,42 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface TokenResponse {
-  token: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
   private readonly BASE = environment.identityService;
-  private _token$ = new BehaviorSubject<string | null>(this.storedToken);
+  private _token$ = new BehaviorSubject<string | null>(localStorage.getItem('gtech_token'));
+  
+  public token$ = this._token$.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  get token(): string | null { return this._token$.value; }
-  get isLoggedIn(): boolean  { return !!this.token; }
-
-  private get storedToken(): string | null {
-    return localStorage.getItem('gtech_token');
+  get token(): string | null { 
+    return this._token$.value; 
   }
 
-  register(payload: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.BASE}/auth/register`, payload);
+  get isLoggedIn(): boolean { 
+    return !!localStorage.getItem('gtech_token'); 
   }
 
-  login(username: string, password: string): Observable<TokenResponse> {
+  register(payload: RegisterRequest): Observable<string> {
+    return this.http.post(
+      `${this.BASE}/auth/register`, 
+      payload, 
+      { responseType: 'text' }
+    );
+  }
+
+  login(username: string, password: string): Observable<string> {
     return this.http
-      .post<TokenResponse>(`${this.BASE}/auth/token`, { username, password })
+      .post(
+        `${this.BASE}/auth/token`, 
+        { username, password }, 
+        { responseType: 'text' }
+      )
       .pipe(
-        tap((res: TokenResponse) => {
-          localStorage.setItem('gtech_token', res.token);
-          this._token$.next(res.token);
+        tap((tokenPlano: string) => {
+          localStorage.setItem('gtech_token', tokenPlano);
+          this._token$.next(tokenPlano);
         })
       );
   }

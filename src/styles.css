@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: #050a14 !important;
+  
+  /* CAMBIA ESTO: */
+  overflow-x: hidden !important;  /* Prohíbe rotundamente el scroll de izquierda a derecha (adiós bordes blancos) */
+  overflow-y: auto !important;    /* El scroll vertical aparecerá SOLO si agrandas la página y el contenido no cabe */
+}
