@@ -1,0 +1,105 @@
+<div class="productos-container">
+  <div class="table-header">
+    <div class="title-section">
+      <h2>Gestión de Proveedores</h2>
+      <a routerLink="/dashboard" class="back-link">← Volver al dashboard</a>
+    </div>
+    <button class="btn-primary" (click)="abrirModalCrear()">+ Nuevo Proveedor</button>
+  </div>
+
+  <div *ngIf="cargando" class="status-message info">
+    <span>⏳</span> Cargando lista de proveedores...
+  </div>
+  <div *ngIf="errorMensaje" class="status-message error">
+    <span>❌</span> {{ errorMensaje }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!cargando && !errorMensaje">
+    <table class="custom-table">
+      <thead>
+        
+        <tr>
+          <th>ID</th>
+          <th>Razón Social / Nombre</th>
+          <th>RUC</th>
+          <th>Teléfono Contacto</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prov of proveedores">
+          <td>#{{ prov.id }}</td>
+          <td class="font-bold">{{ prov.nombre }}</td>
+          <td>{{ prov.ruc }}</td>
+          <td>{{ prov.contacto }}</td>
+          <td>
+            <span class="badge" [ngClass]="prov.activo ? 'bg-success' : 'bg-danger'">
+              {{ prov.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-gap">
+              <button type="button" class="btn-action edit" title="Editar" (click)="abrirModalEditar(prov)">✏️</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="proveedores?.length === 0">
+          <td colspan="6" class="text-center">No hay proveedores registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editando ? 'Editar Proveedor' : 'Registrar Nuevo Proveedor' }}</h3>
+      <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+
+    <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()">
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="nombre">Nombre / Razón Social</label>
+          <input type="text" id="nombre" formControlName="nombre" placeholder="Ej. Etusan">
+          <small class="text-danger" *ngIf="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.errors?.['required']">
+            El nombre es requerido.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="ruc">RUC (11 dígitos)</label>
+          <input type="text" id="ruc" formControlName="ruc" placeholder="Ej. 12345678911">
+          <small class="text-danger" *ngIf="proveedorForm.get('ruc')?.touched && proveedorForm.get('ruc')?.errors?.['pattern']">
+            El RUC debe tener exactamente 11 dígitos numéricos.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="contacto">Teléfono de Contacto</label>
+          <input type="text" id="contacto" formControlName="contacto" placeholder="Ej. 962307372">
+          <small class="text-danger" *ngIf="proveedorForm.get('contacto')?.touched && proveedorForm.get('contacto')?.errors?.['pattern']">
+            Debe ingresar un número celular válido (9 dígitos).
+          </small>
+        </div>
+
+        <div class="form-group checkbox-group" *ngIf="editando">
+          <label>
+            <input type="checkbox" formControlName="activo"> Proveedor Activo
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="proveedorForm.invalid">
+          {{ editando ? 'Guardar Cambios' : 'Registrar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

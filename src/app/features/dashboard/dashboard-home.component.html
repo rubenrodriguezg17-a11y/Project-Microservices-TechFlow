@@ -1,0 +1,55 @@
+<div class="home-grid-container">
+  
+  <div class="metrics-summary">
+    <div class="metric-card critical">
+      <div class="metric-info">
+        <h3>{{ productosBajoStock.length }}</h3>
+        <p>Productos Bajo Stock</p>
+      </div>
+      <span class="metric-icon"></span>
+    </div>
+
+    <div class="metric-card pending">
+      <div class="metric-info">
+        <h3>0</h3>
+        <p>Pedidos Pendientes</p>
+      </div>
+      <span class="metric-icon">⏳</span>
+    </div>
+  </div>
+
+  <section class="dashboard-card-section">
+    <div class="card-section-header">
+      <h3> Alertas de Reposición (Stock Crítico ≤ 10 u.)</h3>
+    </div>
+
+    <div *ngIf="cargandoStock" class="loading-inline">
+       Analizando inventario en tiempo real...
+    </div>
+
+    <div class="table-responsive" *ngIf="!cargandoStock">
+      <table class="minimal-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Inventario Disponible</th>
+            <th>Acción Requerida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prod of productosBajoStock">
+            <td>#{{ prod.id }}</td>
+            <td class="text-bold">{{ prod.nombre }}</td>
+            <td class="text-danger text-bold">{{ prod.stock }} unidades</td>
+            <td><span class="badge-reorder">Solicitar Reabastecimiento</span></td>
+          </tr>
+          <tr *ngIf="productosBajoStock.length === 0">
+            <td colspan="4" class="no-alerts"> El inventario se encuentra óptimo en todos los productos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

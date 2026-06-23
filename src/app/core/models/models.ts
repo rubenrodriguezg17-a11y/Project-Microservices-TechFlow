@@ -33,7 +33,6 @@ export interface Inventario {
   ubicacion: string;
 }
 
-// ─── Pedido ─────────────────────────────────────────
 export interface Pedido {
   id?: number;
   idUsuario: number;
@@ -43,7 +42,6 @@ export interface Pedido {
   fechaCreacion?: string;
 }
 
-// ─── Pago ───────────────────────────────────────────
 export interface Pago {
   id?: number;
   idPedido: number;
@@ -53,7 +51,6 @@ export interface Pago {
   fechaPago?: string;
 }
 
-// ─── Envío ──────────────────────────────────────────
 export interface Envio {
   id?: number;
   idPedido: number;

@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,9 +10,15 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
-  constructor(private auth: AuthService) {}
+  private router = inject(Router);
+  isSidebarHidden: boolean = false;
+
+  toggleSidebar(): void {
+    this.isSidebarHidden = !this.isSidebarHidden;
+  }
 
   logout(): void {
-    this.auth.logout();
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
   }
 }

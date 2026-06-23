@@ -1,80 +1,122 @@
-.dashboard-container {
-  padding: 2rem;
-  font-family: 'Inter', system-ui, sans-serif;
+.dashboard-layout {
+  display: flex;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f8fafc;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+
+  .sidebar-brand {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #1e293b;
+    h2 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #38bdf8; }
+  }
+
+  .btn-toggle-sidebar {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    &:hover { background-color: #1e293b; }
+  }
+
+  .sidebar-menu {
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 1.5rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-left: 4px solid transparent;
+
+      &:hover, &.active {
+        background-color: #1e293b;
+        color: #ffffff;
+      }
+
+      &.active {
+        border-left-color: #38bdf8;
+        color: #38bdf8;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #1e293b;
+
+    .btn-logout {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: inherit;
+      border-radius: 6px;
+      &:hover { background-color: rgba(239, 68, 68, 0.1); }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .dashboard-header {
+  background-color: #ffffff;
+  padding: 1.25rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
 
-  .dashboard-title {
-    color: #185FA5;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-  }
-
-  .btn-logout {
-    padding: .5rem 1rem;
-    background: #e24b4a;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: .85rem;
-    font-weight: 600;
-    transition: background 0.2s ease;
-
-    &:hover {
-      background: #c83c3b;
-    }
-  }
+  .dashboard-title { margin: 0; font-size: 1.5rem; color: #0f172a; font-weight: 700; }
+  .user-profile { font-weight: 600; color: #475569; background: #f1f5f9; padding: 0.5rem 1rem; border-radius: 20px; }
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
+.dashboard-body {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
-.card-link {
-  text-decoration: none;
-  
-  .card {
-    border-radius: 12px;
-    padding: 1.25rem;
-    cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-icon {
-      font-size: 1.75rem;
-      display: block;
-    }
-
-    .card-text {
-      font-weight: 600;
-      margin-top: .5rem;
-      display: block;
-    }
+// Clase para ocultar la barra
+.sidebar-collapsed {
+  .sidebar {
+    width: 70px;
+    .menu-text { display: none; }
+    .menu-item { justify-content: center; padding: 0.8rem 0; border-left: none; }
+    .menu-item.active { background-color: #1e293b; color: #38bdf8; }
   }
-
-  // Paleta de colores individual por tarjeta heredada de tu diseño
-  .card-productos { background: #e6f1fb; .card-text { color: #185FA5; } }
-  .card-pedidos   { background: #e1f5ee; .card-text { color: #0f6e56; } }
-  .card-pagos     { background: #faeeda; .card-text { color: #854f0b; } }
-  .card-inventario{ background: #eeedfe; .card-text { color: #534ab7; } }
-  .card-envios    { background: #faece7; .card-text { color: #993c1d; } }
-  .card-proveedores{ background: #eaf3de; .card-text { color: #3b6d11; } }
 }

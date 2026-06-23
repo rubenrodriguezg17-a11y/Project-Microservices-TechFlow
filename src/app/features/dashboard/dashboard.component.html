@@ -1,55 +1,68 @@
-<div class="dashboard-container">
+<div class="dashboard-layout" [class.sidebar-collapsed]="isSidebarHidden">
   
-  <header class="dashboard-header">
-    <h1 class="dashboard-title">GTech Dashboard</h1>
-    <button (click)="logout()" class="btn-logout">
-      Cerrar sesión
-    </button>
-  </header>
-
-  <main class="dashboard-grid">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <button type="button" class="btn-toggle-sidebar" (click)="toggleSidebar()">☰</button>
+      <h2 class="menu-text">GTech</h2>
+    </div>
     
-    <a routerLink="/productos" class="card-link">
-      <div class="card card-productos">
-        <span class="card-icon">📦</span>
-        <span class="card-text">Productos</span>
-      </div>
-    </a>
+    <nav class="sidebar-menu">
+      <a routerLink="/dashboard/home" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">📊</span>
+        <span class="menu-text">Dashboard</span>
+      </a>
 
-    <a routerLink="/pedidos" class="card-link">
-      <div class="card card-pedidos">
-        <span class="card-icon">🛒</span>
-        <span class="card-text">Pedidos</span>
-      </div>
-    </a>
+      <a routerLink="/dashboard/productos" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">📦</span>
+        <span class="menu-text">Productos</span>
+      </a>
 
-    <a routerLink="/pagos" class="card-link">
-      <div class="card card-pagos">
-        <span class="card-icon">💳</span>
-        <span class="card-text">Pagos</span>
-      </div>
-    </a>
+      <a routerLink="/dashboard/pedidos" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">🛒</span>
+        <span class="menu-text">Pedidos</span>
+      </a>
 
-    <a routerLink="/inventario" class="card-link">
-      <div class="card card-inventario">
-        <span class="card-icon">🏪</span>
-        <span class="card-text">Inventario</span>
-      </div>
-    </a>
+      <a routerLink="/dashboard/pagos" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">💳</span>
+        <span class="menu-text">Pagos</span>
+      </a>
 
-    <a routerLink="/envios" class="card-link">
-      <div class="card card-envios">
-        <span class="card-icon">🚚</span>
-        <span class="card-text">Envíos</span>
-      </div>
-    </a>
+      <a routerLink="/dashboard/inventario" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">🏪</span>
+        <span class="menu-text">Inventario</span>
+      </a>
 
-    <a routerLink="/proveedores" class="card-link">
-      <div class="card card-proveedores">
-        <span class="card-icon">🏭</span>
-        <span class="card-text">Proveedores</span>
-      </div>
-    </a>
+      <a routerLink="/dashboard/envios" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">🚚</span>
+        <span class="menu-text">Envíos</span>
+      </a>
 
-  </main>
+      <a routerLink="/dashboard/proveedores" routerLinkActive="active" class="menu-item">
+        <span class="menu-icon">🏭</span>
+        <span class="menu-text">Proveedores</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="btn-logout">
+        <span class="menu-icon">🚪</span> 
+        <span class="menu-text">Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    
+    <header class="dashboard-header">
+      <h1 class="dashboard-title">Panel de Control</h1>
+      <div class="user-profile">
+        <span>¡Hola, Usuario!</span>
+      </div>
+    </header>
+
+    <main class="dashboard-body">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
 </div>

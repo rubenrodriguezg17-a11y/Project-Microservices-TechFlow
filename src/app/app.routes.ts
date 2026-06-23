@@ -14,37 +14,38 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [AuthGuard],
-    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
-  },
-  {
-    path: 'productos',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/productos/productos.component').then(m => m.ProductosComponent)
-  },
-  {
-    path: 'pedidos',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/pedidos/pedidos.component').then(m => m.PedidosComponent)
-  },
-  {
-    path: 'pagos',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/pagos/pagos.component').then(m => m.PagosComponent)
-  },
-  {
-    path: 'inventario',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/inventario/inventario.component').then(m => m.InventarioComponent)
-  },
-  {
-    path: 'envios',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/envios/envios.component').then(m => m.EnviosComponent)
-  },
-  {
-    path: 'proveedores',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./features/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
+    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./features/dashboard/dashboard-home.component').then(m => m.DashboardHomeComponent)
+      },
+      {
+        path: 'productos',
+        loadComponent: () => import('./features/productos/productos.component').then(m => m.ProductosComponent)
+      },
+      {
+        path: 'pedidos',
+        loadComponent: () => import('./features/pedidos/pedidos.component').then(m => m.PedidosComponent)
+      },
+      {
+        path: 'pagos',
+        loadComponent: () => import('./features/pagos/pagos.component').then(m => m.PagosComponent)
+      },
+      {
+        path: 'inventario',
+        loadComponent: () => import('./features/inventario/inventario.component').then(m => m.InventarioComponent)
+      },
+      {
+        path: 'envios',
+        loadComponent: () => import('./features/envios/envios.component').then(m => m.EnviosComponent)
+      },
+      {
+        path: 'proveedores',
+        loadComponent: () => import('./features/proveedores/proveedores.component').then(m => m.ProveedoresComponent)
+      },
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    ]
   },
   { path: '**', redirectTo: 'login' }
 ];
