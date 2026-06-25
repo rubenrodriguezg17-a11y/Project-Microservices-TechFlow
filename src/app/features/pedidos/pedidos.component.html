@@ -1,0 +1,127 @@
+<div class="productos-container">
+  <div class="table-header">
+    <div class="title-section">
+      <h2>Gestión de Pedidos y Órdenes</h2>
+      <a routerLink="/dashboard/home" class="back-link">← Volver al panel</a>
+    </div>
+    
+    <div class="search-box">
+      <input type="number" #txtCodigo placeholder="Buscar por código..." (keyup.enter)="buscarPorCodigo(txtCodigo.value)">
+      <button type="button" (click)="buscarPorCodigo(txtCodigo.value)">🔍</button>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="abrirModalCrear()">+ Nueva Orden</button>
+  </div>
+
+  <div *ngIf="cargando" class="status-message info">
+    <span>⏳</span> Recuperando libro de órdenes activo...
+  </div>
+  <div *ngIf="errorMensaje" class="status-message error">
+    <span>❌</span> {{ errorMensaje }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!cargando && !errorMensaje">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID Pedido</th>
+          <th>ID Cliente</th>
+          <th>ID Producto</th>
+          <th>Cantidad</th>
+          <th>Total Cobrado</th>
+          <th>Estado Interno</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ped of pedidos">
+          <td class="font-mono">#{{ ped.id }}</td>
+          <td>Usuario {{ ped.idUsuario }}</td>
+          <td class="font-bold">Prod. #{{ ped.idProducto }}</td>
+          <td>{{ ped.cantidad }} u.</td>
+          <td class="price-tag">S/ {{ ped.total | number:'1.2-2' }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-warning': ped.estado === '1',
+              'bg-success': ped.estado === '2',
+              'bg-danger': ped.estado !== '1' && ped.estado !== '2'
+            }">
+              {{ obtenerTextoEstado(ped.estado) }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-gap">
+              <button type="button" class="btn-action edit" title="Cambiar Estado de la Orden" (click)="abrirModalEditar(ped)">✏️ Estado</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="pedidos?.length === 0">
+          <td colspan="7" class="text-center">No se registran órdenes comerciales en el sistema.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editando ? 'Actualizar Flujo de Pedido' : 'Registrar Venta Directa' }}</h3>
+      <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+
+    <form [formGroup]="pedidoForm" (ngSubmit)="guardarPedido()">
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="idUsuario">ID de Usuario Comprador</label>
+          <input type="number" id="idUsuario" formControlName="idUsuario" placeholder="Ej. 1">
+          <small class="text-danger" *ngIf="pedidoForm.get('idUsuario')?.touched && pedidoForm.get('idUsuario')?.errors?.['required']">
+            El ID del comprador es obligatorio.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="idProducto">ID del Producto Solicitado</label>
+          <input type="number" id="idProducto" formControlName="idProducto" placeholder="Ej. 24">
+          <small class="text-danger" *ngIf="pedidoForm.get('idProducto')?.touched && pedidoForm.get('idProducto')?.errors?.['required']">
+            Debe ingresar un identificador de ítem válido.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad Requerida</label>
+          <input type="number" id="cantidad" formControlName="cantidad" placeholder="Ej. 5">
+          <small class="text-danger" *ngIf="pedidoForm.get('cantidad')?.touched && pedidoForm.get('cantidad')?.errors?.['required']">
+            La cantidad mínima de adquisición es 1 unidad.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="!editando">
+          <label for="total">Total Transacción (S/)</label>
+          <input type="number" id="total" formControlName="total" step="0.01" placeholder="0.00">
+          <small class="text-danger" *ngIf="pedidoForm.get('total')?.touched && pedidoForm.get('total')?.errors?.['required']">
+            Indique el valor total de la operación.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="editando">
+          <label for="estado">Estado de la Operación</label>
+          <select id="estado" formControlName="estado" class="form-select">
+            <option value="1">Pendiente</option>
+            <option value="2">Procesado</option>
+            <option value="3">Cancelado</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="pedidoForm.invalid">
+          {{ editando ? 'Actualizar Pedido' : 'Generar Orden' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,55 +1,195 @@
-<div class="home-grid-container">
-  
-  <div class="metrics-summary">
-    <div class="metric-card critical">
-      <div class="metric-info">
-        <h3>{{ productosBajoStock.length }}</h3>
-        <p>Productos Bajo Stock</p>
+<!-- ═══════════════════════════════════════════════════════ ADMIN HOME -->
+<ng-container *ngIf="isAdmin">
+
+  <div class="home-grid-container">
+
+    <!-- Métricas -->
+    <div class="metrics-summary">
+      <div class="metric-card critical">
+        <div class="metric-info">
+          <h3>{{ productosBajoStock.length }}</h3>
+          <p>Productos bajo stock</p>
+        </div>
+        <span class="metric-icon">📦</span>
       </div>
-      <span class="metric-icon"></span>
+      <div class="metric-card pending">
+        <div class="metric-info">
+          <h3>{{ pedidosPendientes.length }}</h3>
+          <p>Pedidos pendientes</p>
+        </div>
+        <span class="metric-icon">⏳</span>
+      </div>
+      <div class="metric-card info">
+        <div class="metric-info">
+          <h3>{{ totalPedidos }}</h3>
+          <p>Total de pedidos</p>
+        </div>
+        <span class="metric-icon">🛒</span>
+      </div>
     </div>
 
-    <div class="metric-card pending">
-      <div class="metric-info">
-        <h3>0</h3>
-        <p>Pedidos Pendientes</p>
+    <!-- Tabla de stock crítico -->
+    <section class="dashboard-card-section">
+      <div class="card-section-header">
+        <h3>🚨 Alertas de reposición — stock crítico</h3>
       </div>
-      <span class="metric-icon">⏳</span>
-    </div>
+      <div *ngIf="cargandoAdmin" class="loading-inline">⏳ Analizando inventario...</div>
+      <div class="table-responsive" *ngIf="!cargandoAdmin">
+        <table class="minimal-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Stock disponible</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of productosBajoStock">
+              <td>#{{ prod.id }}</td>
+              <td class="text-bold">{{ prod.nombre }}</td>
+              <td class="text-danger text-bold">{ (prod as any).stock} unidades</td>
+              <td>
+                <button class="badge-reorder" (click)="irAReabastecer(prod.id!)">
+                  Solicitar reabastecimiento
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="productosBajoStock.length === 0">
+              <td colspan="4" class="no-alerts">Inventario óptimo en todos los productos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Pedidos pendientes -->
+    <section class="dashboard-card-section">
+      <div class="card-section-header">
+        <h3>⏳ Pedidos pendientes de procesar</h3>
+      </div>
+      <div *ngIf="cargandoAdmin" class="loading-inline">⏳ Cargando pedidos...</div>
+      <div class="table-responsive" *ngIf="!cargandoAdmin">
+        <table class="minimal-table">
+          <thead>
+            <tr>
+              <th>ID Pedido</th>
+              <th>Usuario</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ped of pedidosPendientes">
+              <td>#{{ ped.id }}</td>
+              <td>Usuario {{ ped.idUsuario }}</td>
+              <td>Producto #{{ ped.idProducto }}</td>
+              <td>{{ ped.cantidad }}</td>
+              <td><span class="badge bg-warning">Pendiente</span></td>
+            </tr>
+            <tr *ngIf="pedidosPendientes.length === 0">
+              <td colspan="5" class="no-alerts">✅ Sin pedidos pendientes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </div>
 
-  <section class="dashboard-card-section">
-    <div class="card-section-header">
-      <h3> Alertas de Reposición (Stock Crítico ≤ 10 u.)</h3>
+</ng-container>
+
+<!-- ═══════════════════════════════════════════════════════ CLIENTE HOME -->
+<ng-container *ngIf="!isAdmin">
+
+  <div class="home-grid-container">
+
+    <div class="metrics-summary">
+      <div class="metric-card info">
+        <div class="metric-info">
+          <h3>{{ misPedidos.length }}</h3>
+          <p>Mis pedidos</p>
+        </div>
+        <span class="metric-icon">🛒</span>
+      </div>
+      <div class="metric-card pending">
+        <div class="metric-info">
+          <h3>{{ ultimoEnvio ? estadoEnvioLabel(ultimoEnvio.estadoEnvio) : '—' }}</h3>
+          <p>Estado del último envío</p>
+        </div>
+        <span class="metric-icon">🚚</span>
+      </div>
     </div>
 
-    <div *ngIf="cargandoStock" class="loading-inline">
-       Analizando inventario en tiempo real...
-    </div>
+    <section class="dashboard-card-section">
+      <div class="card-section-header">
+        <h3>🛒 Mis pedidos recientes</h3>
+      </div>
+      <div *ngIf="cargandoCliente" class="loading-inline">⏳ Cargando tus pedidos...</div>
+      <div class="table-responsive" *ngIf="!cargandoCliente">
+        <table class="minimal-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ped of misPedidos">
+              <td>#{{ ped.id }}</td>
+              <td>Producto #{{ ped.idProducto }}</td>
+              <td>{{ ped.cantidad }}</td>
+              <td>
+                <span class="badge"
+                  [class.bg-warning]="ped.estado === 'PENDIENTE'"
+                  [class.bg-success]="ped.estado === 'ENTREGADO'"
+                  [class.bg-info]="ped.estado === 'ENVIADO' || ped.estado === 'PROCESANDO'"
+                  [class.bg-danger]="ped.estado === 'CANCELADO'">
+                  {{ estadoLabel(ped.estado) }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="misPedidos.length === 0">
+              <td colspan="4" class="no-alerts">Aún no tienes pedidos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-    <div class="table-responsive" *ngIf="!cargandoStock">
-      <table class="minimal-table">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Producto</th>
-            <th>Inventario Disponible</th>
-            <th>Acción Requerida</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let prod of productosBajoStock">
-            <td>#{{ prod.id }}</td>
-            <td class="text-bold">{{ prod.nombre }}</td>
-            <td class="text-danger text-bold">{{ prod.stock }} unidades</td>
-            <td><span class="badge-reorder">Solicitar Reabastecimiento</span></td>
-          </tr>
-          <tr *ngIf="productosBajoStock.length === 0">
-            <td colspan="4" class="no-alerts"> El inventario se encuentra óptimo en todos los productos.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+    <!-- Tracking del último envío -->
+    <section class="dashboard-card-section" *ngIf="ultimoEnvio">
+      <div class="card-section-header">
+        <h3>🚚 Seguimiento de tu último envío</h3>
+      </div>
+      <div class="tracking-card">
+        <div class="tracking-row">
+          <span class="tracking-label">Pedido</span>
+          <span>#{{ ultimoEnvio.idPedido }}</span>
+        </div>
+        <div class="tracking-row">
+          <span class="tracking-label">Empresa</span>
+          <span>{{ ultimoEnvio.empresaEnvio ?? '—' }}</span>
+        </div>
+        <div class="tracking-row">
+          <span class="tracking-label">Tracking</span>
+          <span class="tracking-number">{{ ultimoEnvio.trackingNumber ?? '—' }}</span>
+        </div>
+        <div class="tracking-row">
+          <span class="tracking-label">Estado</span>
+          <span class="badge"
+            [class.bg-warning]="ultimoEnvio.estadoEnvio === 'PREPARANDO'"
+            [class.bg-info]="ultimoEnvio.estadoEnvio === 'EN_CAMINO'"
+            [class.bg-success]="ultimoEnvio.estadoEnvio === 'ENTREGADO'">
+            {{ estadoEnvioLabel(ultimoEnvio.estadoEnvio) }}
+          </span>
+        </div>
+      </div>
+    </section>
 
-</div>
+  </div>
+
+</ng-container>

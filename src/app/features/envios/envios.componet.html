@@ -1,0 +1,117 @@
+<div class="productos-container">
+  <div class="table-header">
+    <div class="title-section">
+      <h2>Despacho y Seguimiento de Envíos</h2>
+      <a routerLink="/dashboard/home" class="back-link">← Volver al panel</a>
+    </div>
+    
+    <div class="search-box">
+      <input type="number" #txtCodigo placeholder="Buscar id pedido..." (keyup.enter)="buscarPorCodigo(txtCodigo.value)">
+      <button type="button" (click)="buscarPorCodigo(txtCodigo.value)">🔍</button>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="abrirModalCrear()">+ Crear Guía de Envío</button>
+  </div>
+
+  <div *ngIf="cargando" class="status-message info">
+    <span>⏳</span> Conectando con el servicio de transportes...
+  </div>
+  <div *ngIf="errorMensaje" class="status-message error">
+    <span>❌</span> {{ errorMensaje }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!cargando && !errorMensaje">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID Guía</th>
+          <th>ID Pedido</th>
+          <th>Número de Tracking</th>
+          <th>Agencia de Transporte</th>
+          <th>Estado de Entrega</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let env of envios">
+          <td class="font-mono">#{{ env.id }}</td>
+          <td class="font-bold">Pedido #{{ env.idPedido }}</td>
+          <td><span class="tracking-tag">{{ env.trackingNumber }}</span></td>
+          <td>{{ env.empresaEnvio }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-danger': env.estadoEnvio === 'EN_ALMACEN',
+              'bg-warning': env.estadoEnvio === 'EN_CAMINO',
+              'bg-success': env.estadoEnvio === 'ENTREGADO'
+            }">
+              {{ env.estadoEnvio === 'EN_ALMACEN' ? 'En Almacén' : env.estadoEnvio === 'EN_CAMINO' ? 'En Camino' : 'Entregado' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-gap">
+              <button type="button" class="btn-action edit" title="Actualizar Estado" (click)="abrirModalEditar(env)">✏️ Estado</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="envios?.length === 0">
+          <td colspan="6" class="text-center">No se registran guías de transporte emitidas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editando ? 'Actualizar Estado del Envío' : 'Emitir Nueva Guía de Transporte' }}</h3>
+      <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+
+    <form [formGroup]="envioForm" (ngSubmit)="guardarEnvio()">
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="idPedido">Código ID del Pedido</label>
+          <input type="number" id="idPedido" formControlName="idPedido" placeholder="Ej. 1">
+          <small class="text-danger" *ngIf="envioForm.get('idPedido')?.touched && envioForm.get('idPedido')?.errors?.['required']">
+            El ID de pedido es requerido.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="!editando">
+          <label for="trackingNumber">Número de Tracking</label>
+          <input type="text" id="trackingNumber" formControlName="trackingNumber" placeholder="Ej. 1002">
+          <small class="text-danger" *ngIf="envioForm.get('trackingNumber')?.touched && envioForm.get('trackingNumber')?.errors?.['required']">
+            El número de seguimiento es obligatorio.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="!editando">
+          <label for="empresaEnvio">Empresa de Envío / Courier</label>
+          <input type="text" id="empresaEnvio" formControlName="empresaEnvio" placeholder="Ej. Etusac">
+          <small class="text-danger" *ngIf="envioForm.get('empresaEnvio')?.touched && envioForm.get('empresaEnvio')?.errors?.['required']">
+            Especifique el courier transportista.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="editando">
+          <label for="estadoEnvio">Estado del Despacho</label>
+          <select id="estadoEnvio" formControlName="estadoEnvio" class="form-select">
+            <option *ngFor="let est of estadosDisponibles" [value]="est">
+              {{ est === 'EN_ALMACEN' ? 'En Almacén' : est === 'EN_CAMINO' ? 'En Camino' : 'Entregado' }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="envioForm.invalid">
+          {{ editando ? 'Actualizar Estado' : 'Emitir Guía' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

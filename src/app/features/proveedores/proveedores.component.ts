@@ -99,18 +99,38 @@ export class ProveedoresComponent implements OnInit {
     const proveedorData: Proveedor = this.proveedorForm.value;
 
     if (this.editando && this.proveedorIdEnEdicion) {
-      proveedorData.id = this.proveedorIdEnEdicion;
+      this.http.put(`${this.BASE_URL}/updateVendor/${this.proveedorIdEnEdicion}`, proveedorData, { responseType: 'text' })
+        .subscribe({
+          next: () => {
+            this.obtenerProveedores();
+            this.cerrarModal();
+          },
+          error: (err) => console.error(err)
+        });
+    } else {
+      this.http.post<Proveedor>(`${this.BASE_URL}/createVendor`, proveedorData).subscribe({
+        next: () => {
+          this.obtenerProveedores();
+          this.cerrarModal();
+        },
+        error: (err) => console.error(err)
+      });
     }
+  }
 
-    this.http.post<Proveedor>(`${this.BASE_URL}/createVendor`, proveedorData).subscribe({
-      next: () => {
-        this.obtenerProveedores();
-        this.cerrarModal();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+  eliminarProveedor(id?: number): void {
+    if (!id) return;
+
+    const confirmar = confirm('¿Estás seguro de eliminar este proveedor?');
+    if (confirmar) {
+      this.http.delete(`${this.BASE_URL}/deleteVendor/${id}`, { responseType: 'text' })
+        .subscribe({
+          next: () => {
+            this.obtenerProveedores();
+            this.cdr.detectChanges();
+          },
+          error: (err) => console.error(err)
+        });
+    }
   }
 }

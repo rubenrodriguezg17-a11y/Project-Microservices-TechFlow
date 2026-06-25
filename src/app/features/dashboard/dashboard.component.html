@@ -1,62 +1,79 @@
 <div class="dashboard-layout" [class.sidebar-collapsed]="isSidebarHidden">
-  
+
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <button type="button" class="btn-toggle-sidebar" (click)="toggleSidebar()">☰</button>
+      <button type="button" class="btn-toggle-sidebar" (click)="toggleSidebar()">
+        <ng-icon name="lucideMenu" size="20"></ng-icon>
+      </button>
       <h2 class="menu-text">GTech</h2>
     </div>
-    
+
     <nav class="sidebar-menu">
+
+      <!-- Disponible para todos los roles -->
       <a routerLink="/dashboard/home" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">📊</span>
-        <span class="menu-text">Dashboard</span>
+        <ng-icon name="lucideLayoutDashboard" size="20"></ng-icon>
+        <span class="menu-text">Inicio</span>
       </a>
 
-      <a routerLink="/dashboard/productos" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">📦</span>
-        <span class="menu-text">Productos</span>
-      </a>
+      <!-- Solo ADMIN -->
+      <ng-container *ngIf="isAdmin">
+        <a routerLink="/dashboard/productos" routerLinkActive="active" class="menu-item">
+          <ng-icon name="lucidePackage" size="20"></ng-icon>
+          <span class="menu-text">Productos</span>
+        </a>
 
+        <a routerLink="/dashboard/pagos" routerLinkActive="active" class="menu-item">
+          <ng-icon name="lucideCreditCard" size="20"></ng-icon>
+          <span class="menu-text">Pagos</span>
+        </a>
+
+        <a routerLink="/dashboard/inventario" routerLinkActive="active" class="menu-item">
+          <ng-icon name="lucideBoxes" size="20"></ng-icon>
+          <span class="menu-text">Inventario</span>
+        </a>
+
+        <a routerLink="/dashboard/proveedores" routerLinkActive="active" class="menu-item">
+          <ng-icon name="lucideFactory" size="20"></ng-icon>
+          <span class="menu-text">Proveedores</span>
+        </a>
+
+        <a routerLink="/dashboard/clientes" routerLinkActive="active" class="menu-item">
+          <ng-icon name="lucideUsers" size="20"></ng-icon>
+          <span class="menu-text">Clientes</span>
+        </a>
+      </ng-container>
+
+      <!-- ADMIN y CLIENTE -->
       <a routerLink="/dashboard/pedidos" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">🛒</span>
-        <span class="menu-text">Pedidos</span>
-      </a>
-
-      <a routerLink="/dashboard/pagos" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">💳</span>
-        <span class="menu-text">Pagos</span>
-      </a>
-
-      <a routerLink="/dashboard/inventario" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">🏪</span>
-        <span class="menu-text">Inventario</span>
+        <ng-icon name="lucideShoppingCart" size="20"></ng-icon>
+        <span class="menu-text">{{ isAdmin ? 'Pedidos' : 'Mis Pedidos' }}</span>
       </a>
 
       <a routerLink="/dashboard/envios" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">🚚</span>
-        <span class="menu-text">Envíos</span>
+        <ng-icon name="lucideTruck" size="20"></ng-icon>
+        <span class="menu-text">{{ isAdmin ? 'Envíos' : 'Seguimiento' }}</span>
       </a>
 
-      <a routerLink="/dashboard/proveedores" routerLinkActive="active" class="menu-item">
-        <span class="menu-icon">🏭</span>
-        <span class="menu-text">Proveedores</span>
-      </a>
     </nav>
 
     <div class="sidebar-footer">
       <button (click)="logout()" class="btn-logout">
-        <span class="menu-icon">🚪</span> 
+        <ng-icon name="lucideLogOut" size="20"></ng-icon>
         <span class="menu-text">Cerrar sesión</span>
       </button>
     </div>
   </aside>
 
   <div class="main-content">
-    
+
     <header class="dashboard-header">
       <h1 class="dashboard-title">Panel de Control</h1>
       <div class="user-profile">
-        <span>¡Hola, Usuario!</span>
+        <span class="role-badge" [class.admin]="isAdmin" [class.cliente]="!isAdmin">
+          {{ isAdmin ? 'Admin' : 'Cliente' }}
+        </span>
+        <span>¡Hola, {{ userName }}!</span>
       </div>
     </header>
 

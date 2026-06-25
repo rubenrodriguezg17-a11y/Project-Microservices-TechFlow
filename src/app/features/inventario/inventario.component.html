@@ -1,0 +1,110 @@
+<div class="productos-container">
+  <div class="table-header">
+    <div class="title-section">
+      <h2>Control de Inventario</h2>
+      <a routerLink="/dashboard/home" class="back-link">← Volver al panel</a>
+    </div>
+    
+    <div class="search-box">
+      <input type="number" #txtCodigo placeholder="Buscar id producto..." (keyup.enter)="buscarPorCodigo(txtCodigo.value)">
+      <button type="button" (click)="buscarPorCodigo(txtCodigo.value)">
+        <ng-icon name="lucideSearch"></ng-icon>
+      </button>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="abrirModalCrear()">+ Registrar Lote</button>
+  </div>
+
+  <div *ngIf="cargando" class="status-message info">
+    <span>⏳</span> Sincronizando existencias de almacén...
+  </div>
+  <div *ngIf="errorMensaje" class="status-message error">
+    <span>❌</span> {{ errorMensaje }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!cargando && !errorMensaje">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID Registro</th>
+          <th>ID Producto</th>
+          <th>Stock Actual</th>
+          <th>Ubicación en Almacén</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inv of inventarios">
+          <td class="font-mono">#{{ inv.id }}</td>
+          <td class="font-bold">Producto {{ inv.idProducto }}</td>
+          <td class="font-semibold" [ngClass]="inv.cantidad <= 10 ? 'text-danger' : 'text-success'">
+            {{ inv.cantidad }} unidades
+          </td>
+          <td><span class="location-tag">{{ inv.ubicacion }}</span></td>
+          <td>
+            <span class="badge" [ngClass]="inv.cantidad <= 10 ? 'bg-danger' : 'bg-success'">
+              {{ inv.cantidad <= 10 ? 'Stock Bajo' : 'Disponible' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions-gap">
+              <button type="button" class="btn-action edit" title="Actualizar Stock" (click)="abrirModalEditar(inv)">
+                <ng-icon name="lucideEdit2"></ng-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="inventarios?.length === 0">
+          <td colspan="6" class="text-center">No hay registros de inventario guardados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editando ? 'Actualizar Stock Disponible' : 'Registrar Nuevo Lote' }}</h3>
+      <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+
+    <form [formGroup]="inventarioForm" (ngSubmit)="guardarInventario()">
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="idProducto">Código ID del Producto</label>
+          <input type="number" id="idProducto" formControlName="idProducto" placeholder="Ej. 5">
+          <small class="text-danger" *ngIf="inventarioForm.get('idProducto')?.touched && inventarioForm.get('idProducto')?.errors?.['required']">
+            El ID del producto es obligatorio.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad en Existencia</label>
+          <input type="number" id="cantidad" formControlName="cantidad" placeholder="Ej. 150">
+          <small class="text-danger" *ngIf="inventarioForm.get('cantidad')?.touched && inventarioForm.get('cantidad')?.errors?.['required']">
+            Debe indicar la cantidad de unidades.
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="!editando">
+          <label for="ubicacion">Ubicación / Pasillo</label>
+          <input type="text" id="ubicacion" formControlName="ubicacion" placeholder="Ej. Pasillo A - Estante 3">
+          <small class="text-danger" *ngIf="inventarioForm.get('ubicacion')?.touched && inventarioForm.get('ubicacion')?.errors?.['required']">
+            La ubicación física es necesaria.
+          </small>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="inventarioForm.invalid">
+          {{ editando ? 'Actualizar Stock' : 'Registrar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

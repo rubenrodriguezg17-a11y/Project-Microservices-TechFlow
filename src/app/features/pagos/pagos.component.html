@@ -1,0 +1,100 @@
+<div class="productos-container">
+  <div class="table-header">
+    <div class="title-section">
+      <h2>Transacciones y Caja de Pagos</h2>
+      <a routerLink="/dashboard/home" class="back-link">← Volver al panel</a>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="abrirModalCrear()">+ Procesar Recibo</button>
+  </div>
+
+  <div *ngIf="cargando" class="status-message info">
+    <span>⏳</span> Validando transacciones con las pasarelas de pago...
+  </div>
+  <div *ngIf="errorMensaje" class="status-message error">
+    <span>❌</span> {{ errorMensaje }}
+  </div>
+
+  <div class="table-responsive" *ngIf="!cargando && !errorMensaje">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID Recibo</th>
+          <th>ID Pedido Vinculado</th>
+          <th>Método Utilizado</th>
+          <th>Importe Total</th>
+          <th>Estado de Caja</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pago of pagos">
+          <td class="font-mono">#{{ pago.id }}</td>
+          <td class="font-bold">Pedido #{{ pago.idPedido }}</td>
+          <td>
+            <span class="payment-method-tag">{{ pago.metodoPago.trim() }}</span>
+          </td>
+          <td class="price-tag">S/ {{ pago.monto | number:'1.2-2' }}</td>
+          <td>
+            <span class="badge" [ngClass]="pago.estadoPago.trim() === 'Activo' ? 'bg-success' : 'bg-danger'">
+              {{ pago.estadoPago.trim() === 'Activo' ? 'Liquidado' : 'Rechazado' }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="pagos?.length === 0">
+          <td colspan="5" class="text-center">No se registran cobros procesados en esta fecha.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Procesar Nuevo Pago</h3>
+      <button type="button" class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+
+    <form [formGroup]="pagoForm" (ngSubmit)="procesarPago()">
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="idPedido">ID del Pedido Comercial</label>
+          <input type="number" id="idPedido" formControlName="idPedido" placeholder="Ej. 1">
+          <small class="text-danger" *ngIf="pagoForm.get('idPedido')?.touched && pagoForm.get('idPedido')?.errors?.['required']">
+            Vincular la transacción a una orden es requerido.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="monto">Monto de la Operación (S/)</label>
+          <input type="number" id="monto" formControlName="monto" step="0.01" placeholder="0.00">
+          <small class="text-danger" *ngIf="pagoForm.get('monto')?.touched && pagoForm.get('monto')?.errors?.['required']">
+            Debe indicar la cantidad exacta de dinero.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="metodoPago">Canal / Medio Financiero</label>
+          <select id="metodoPago" formControlName="metodoPago" class="form-select">
+            <option *ngFor="let met of metodosPago" [value]="met">{{ met }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="estadoPago">Estado de Operación Inicial</label>
+          <select id="estadoPago" formControlName="estadoPago" class="form-select">
+            <option value="Activo">Activo (Aprobado)</option>
+            <option value="Inactivo">Inactivo (Rechazado)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="pagoForm.invalid">Efectuar Pago</button>
+      </div>
+    </form>
+  </div>
+</div>

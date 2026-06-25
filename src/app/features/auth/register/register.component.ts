@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService, RegisterRequest } from '../../../core/services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { RegisterRequest } from '../../../core/models/models';   // ← corregido
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -20,8 +21,8 @@ export class RegisterComponent {
     telefono: '',
     password: ''
   };
-  
-  loading = false;
+
+  loading  = false;
   errorMsg = '';
   showPass = false;
 
@@ -33,7 +34,7 @@ export class RegisterComponent {
       return;
     }
 
-    this.loading = true;
+    this.loading  = true;
     this.errorMsg = '';
 
     this.auth.register(this.payload).subscribe({
@@ -42,7 +43,7 @@ export class RegisterComponent {
         this.router.navigate(['/login'], { queryParams: { registered: 'true' } });
       },
       error: (err: HttpErrorResponse) => {
-        this.loading = false;
+        this.loading  = false;
         this.errorMsg = err.status === 400
           ? 'Los datos ingresados no son válidos o el correo ya existe.'
           : 'Error al conectar con el servidor de registro.';

@@ -1,122 +1,230 @@
+// ==========================================
+// 1. CONFIGURACIÓN DE COLORES Y VARIABLES TECH
+// ==========================================
+:host {
+  --bg-dark-main: #0f172a;      // Fondo principal (Azul pizarra profundo)
+  --bg-sidebar: #1e293b;        // Fondo de la barra lateral
+  --accent-neon: #3b82f6;       // Color de énfasis (Azul eléctrico Tech)
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --text-primary: #f8fafc;      // Texto brillante
+  --text-muted: #94a3b8;        // Texto secundario / atenuado
+  --text-danger: #f87171;       // Color para cerrar sesión
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 70px;
+  --transition-speed: 0.3s;
+}
+
+// ==========================================
+// 2. ESTRUCTURA GLOBAL DEL DASHBOARD
+// ==========================================
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--bg-dark-main);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
 }
 
+// ==========================================
+// 3. ESTILOS DE LA BARRA LATERAL (SIDEBAR)
+// ==========================================
 .sidebar {
-  width: 260px;
-  background-color: #0f172a;
-  color: #ffffff;
+  width: var(--sidebar-width);
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+  transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
 
+  // Encabezado del Sidebar (Logo y Botón)
   .sidebar-brand {
-    padding: 1.5rem;
+    height: 70px;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #1e293b;
-    h2 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #38bdf8; }
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 15px;
+    overflow: hidden;
+
+    .btn-toggle-sidebar {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: var(--accent-neon);
+        border-color: var(--accent-neon);
+        background-color: rgba(59, 130, 246, 0.1);
+      }
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+      margin: 0;
+      background: linear-gradient(45deg, #3b82f6, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      transition: opacity var(--transition-speed);
+    }
   }
 
-  .btn-toggle-sidebar {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 1.25rem;
-    cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    &:hover { background-color: #1e293b; }
-  }
-
+  // Menú de Navegación
   .sidebar-menu {
-    padding: 1.5rem 0;
+    flex: 1;
+    padding: 20px 12px;
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    flex: 1;
+    gap: 8px;
 
     .menu-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1.5rem;
-      color: #94a3b8;
+      padding: 12px 14px;
+      color: var(--text-muted);
       text-decoration: none;
-      font-weight: 500;
+      border-radius: 10px;
+      gap: 14px;
       transition: all 0.2s ease;
-      border-left: 4px solid transparent;
+      white-space: nowrap;
 
-      &:hover, &.active {
-        background-color: #1e293b;
-        color: #ffffff;
+      ng-icon {
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
       }
 
+      .menu-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: opacity var(--transition-speed);
+      }
+
+      // Efecto Hover (Pasar el mouse)
+      &:hover {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.03);
+
+        ng-icon {
+          transform: scale(1.1);
+          color: var(--accent-neon);
+        }
+      }
+
+      // Estado Activo (Ruta actual en Angular)
       &.active {
-        border-left-color: #38bdf8;
-        color: #38bdf8;
+        color: var(--text-primary);
+        background: linear-gradient(90deg, var(--accent-glow), transparent);
+        border-left: 4px solid var(--accent-neon);
+        padding-left: 10px; // Compensa el borde para que no se mueva
+
+        ng-icon {
+          color: var(--accent-neon);
+        }
       }
     }
   }
 
+  // Footer del Sidebar (Cerrar Sesión)
   .sidebar-footer {
-    padding: 1.5rem;
-    border-top: 1px solid #1e293b;
+    padding: 20px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 
     .btn-logout {
       width: 100%;
-      background: none;
-      border: none;
-      color: #ef4444;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 0.5rem;
+      padding: 12px 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 10px;
+      gap: 14px;
       cursor: pointer;
-      font-weight: 500;
-      font-family: inherit;
-      border-radius: 6px;
-      &:hover { background-color: rgba(239, 68, 68, 0.1); }
+      text-align: left;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      ng-shrink { flex-shrink: 0; }
+
+      .menu-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      &:hover {
+        color: var(--text-danger);
+        background-color: rgba(248, 113, 113, 0.08);
+      }
     }
   }
 }
 
+// ==========================================
+// 4. ÁREA DE CONTENIDO PRINCIPAL (MAIN CONTENT)
+// ==========================================
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  min-width: 0; // Evita desbordamientos de flexbox
+
+  .dashboard-header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px); // Efecto esmerilado de fondo
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .user-profile {
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+  }
+
+  .dashboard-body {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+  }
 }
 
-.dashboard-header {
-  background-color: #ffffff;
-  padding: 1.25rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-
-  .dashboard-title { margin: 0; font-size: 1.5rem; color: #0f172a; font-weight: 700; }
-  .user-profile { font-weight: 600; color: #475569; background: #f1f5f9; padding: 0.5rem 1rem; border-radius: 20px; }
-}
-
-.dashboard-body {
-  padding: 2rem;
-  flex: 1;
-  overflow-y: auto;
-}
-
-// Clase para ocultar la barra
-.sidebar-collapsed {
+// ==========================================
+// 5. COMPORTAMIENTO COLAPSADO (SIDEBAR HIDDEN)
+// ==========================================
+.dashboard-layout.sidebar-collapsed {
   .sidebar {
-    width: 70px;
-    .menu-text { display: none; }
-    .menu-item { justify-content: center; padding: 0.8rem 0; border-left: none; }
-    .menu-item.active { background-color: #1e293b; color: #38bdf8; }
+    width: var(--sidebar-collapsed-width);
+
+    .menu-text {
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 }

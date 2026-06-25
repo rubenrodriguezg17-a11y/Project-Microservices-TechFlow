@@ -1,0 +1,66 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Gestión de Clientes</h2>
+    <p class="page-subtitle">Vista de administrador — todos los clientes registrados</p>
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert-error"   *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="loading-row" *ngIf="loading">
+    <span class="spinner"></span> Cargando clientes...
+  </div>
+
+  <div class="table-wrapper" *ngIf="!loading && clientes.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Dirección de envío</th>
+          <th>Rol actual</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of clientes">
+          <td>{{ c.idCliente }}</td>
+          <td>{{ c.name ?? '—' }}</td>
+          <td>{{ c.email ?? '—' }}</td>
+          <td>{{ c.telefono ?? '—' }}</td>
+          <td>{{ c.direccionEnvio ?? '—' }}</td>
+          <td>
+            <span class="badge" [class.badge-admin]="c.rol === 'ADMIN'" [class.badge-cliente]="c.rol === 'CLIENTE'">
+              {{ c.rol }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button
+              class="btn-sm btn-warning"
+              *ngIf="c.rol === 'CLIENTE'"
+              (click)="cambiarRol(c, 'ADMIN')"
+              title="Promover a Admin">
+              → Admin
+            </button>
+            <button
+              class="btn-sm btn-secondary"
+              *ngIf="c.rol === 'ADMIN'"
+              (click)="cambiarRol(c, 'CLIENTE')"
+              title="Degradar a Cliente">
+              → Cliente
+            </button>
+            <button class="btn-sm btn-danger" (click)="eliminar(c.idCliente!)" title="Eliminar">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && clientes.length === 0">
+    <p>No hay clientes registrados aún.</p>
+  </div>
+</div>

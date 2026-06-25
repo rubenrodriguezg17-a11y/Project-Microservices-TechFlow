@@ -1,11 +1,37 @@
-// ─── Usuario ────────────────────────────────────────
+// ─── Usuario / Identity ──────────────────────────────
 export interface User {
   id?: number;
   name: string;
   email: string;
-  direccionEnvio: string;
-  telefono: string;
   password?: string;
+}
+
+// ─── Cliente (perfil completo) ───────────────────────
+export interface Cliente {
+  idCliente?: number;
+  idUsuario: number;
+  name?: string;        // viene de Identity via Feign
+  email?: string;       // viene de Identity via Feign
+  telefono?: string;
+  direccionEnvio?: string;
+  rol: 'CLIENTE' | 'ADMIN';
+}
+
+// ─── Request de registro completo ────────────────────
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  telefono: string;
+  direccionEnvio: string;
+}
+
+// ─── Payload del JWT decodificado ────────────────────
+export interface JwtPayload {
+  sub: string;          // email
+  id?: number;          // idUsuario (si lo incluyes en el token)
+  iat: number;
+  exp: number;
 }
 
 // ─── Producto ───────────────────────────────────────
@@ -33,6 +59,7 @@ export interface Inventario {
   ubicacion: string;
 }
 
+// ─── Pedido ─────────────────────────────────────────
 export interface Pedido {
   id?: number;
   idUsuario: number;
@@ -42,6 +69,7 @@ export interface Pedido {
   fechaCreacion?: string;
 }
 
+// ─── Pago ───────────────────────────────────────────
 export interface Pago {
   id?: number;
   idPedido: number;
@@ -51,10 +79,11 @@ export interface Pago {
   fechaPago?: string;
 }
 
+// ─── Envio ──────────────────────────────────────────
 export interface Envio {
   id?: number;
   idPedido: number;
-  direccion: string;
-  estado?: 'PREPARANDO' | 'EN_CAMINO' | 'ENTREGADO';
-  fechaEstimada?: string;
+  trackingNumber?: string;
+  empresaEnvio?: string;
+  estadoEnvio?: 'PREPARANDO' | 'EN_CAMINO' | 'ENTREGADO';
 }
